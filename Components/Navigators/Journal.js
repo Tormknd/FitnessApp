@@ -2,11 +2,11 @@ import React from 'react';
 import { View, ScrollView, StyleSheet, Image } from 'react-native';
 import {SearchBar, Card, Text, Button} from '@rneui/themed';
 import AddNewFood from './AddNewFood'
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
-let foods = [
+export let foods = [
     {
         name: 'Chocolat',
         '100g': {
@@ -16,7 +16,7 @@ let foods = [
         },
     },
     {
-        name: 'Chocolat1',
+        name: 'Oeuf',
         '100g': {
             glucide: 30,
             lipide: 20,
@@ -24,7 +24,7 @@ let foods = [
         },
     },
     {
-        name: 'Chocolat2',
+        name: 'Farine',
         '100g': {
             glucide: 30,
             lipide: 20,
@@ -33,21 +33,15 @@ let foods = [
     },
 ];
 
-function handleClick({navigation}) {
+function HandleClick({navigation}) {
     return (
-      navigation.navigate(AddNewFood)
+      <AddNewFood navigation={navigation} />
     );
 }
 
 type CardsComponentsProps = {};
 
-const Cards: React.FunctionComponent<CardsComponentsProps> = ({navigation}) => {
-
-    const [search, setSearch] = React.useState("");
-
-    const updateSearch = (search) => {
-        setSearch(search);
-    };
+const Cards: React.FunctionComponent<CardsComponentsProps> = ({ navigation, route }) => {
 
     return (
             <ScrollView>
@@ -66,7 +60,10 @@ const Cards: React.FunctionComponent<CardsComponentsProps> = ({navigation}) => {
                             );
                         })}
                         <Card.Divider/>
-                        <Button title="Ajouter un Aliment" type="outline" onPress={() => navigation.navigate('AddFood')}/>
+                        <Button title="Ajouter un Aliment" type="outline"
+                                onPress={() => {
+                                    navigation.navigate('AddFood', { lol:foods })
+                                }}/>
                     </Card>
                     <Card>
                         <Card.Title>CARD WITH DIVIDER</Card.Title>
@@ -104,13 +101,11 @@ const Cards: React.FunctionComponent<CardsComponentsProps> = ({navigation}) => {
 const Stack = createNativeStackNavigator();
 
 function JournalComponent() {
+
     return (
-        <NavigationContainer independent={true}>
-            <Stack.Navigator initialRouteName="Journal">
-                <Stack.Screen name="Journal" component={Cards} />
-                <Stack.Screen name="AddFood" component={AddNewFood} />
+            <Stack.Navigator>
+                <Stack.Screen options={{headerShown: false}} name="Journal" component={Cards} />
             </Stack.Navigator>
-        </NavigationContainer>
     )
 }
 

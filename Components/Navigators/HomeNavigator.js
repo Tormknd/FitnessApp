@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { View, Button, Text, Animated } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { View, Button, Text, Animated, StyleSheet } from 'react-native';
+import { NavigationContainer, useNavigation, getFocusedRouteNameFromRoute  } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import JournalComponent from './Journal';
+import JournalComponent, {foods} from './Journal';
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import AddNewFood from "./AddNewFood";
 
 
 
-function DashBoard({ navigation }) {
+function DashBoard() {
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>DashBoard screen</Text>
@@ -15,13 +17,13 @@ function DashBoard({ navigation }) {
     );
 }
 
-function Journal({ navigation }) {
+function Journal({navigation}) {
     return (
-            <JournalComponent />
+            <JournalComponent naviation={navigation}/>
     );
 }
 
-function Fil({ navigation }) {
+function Fil() {
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>Fil screen</Text>
@@ -30,7 +32,7 @@ function Fil({ navigation }) {
     );
 }
 
-function Settings({ navigation }) {
+function Settings() {
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>Settings screen</Text>
@@ -42,48 +44,58 @@ function Settings({ navigation }) {
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
+
+    const navigation = useNavigation()
+
     return (
-        <Tab.Navigator screenOptions={{headerShown: false}}>
+        <Tab.Navigator>
             <Tab.Screen
                 name="DashBoard"
                 component={DashBoard}
-                options={{
-                    headerTintColor: 'white',
-                    headerStyle: { backgroundColor: 'tomato' },
-                }}
+                options={styles.options}
             />
             <Tab.Screen
                 name="Journal"
-                component={Journal}
-                options={{
-                    headerTintColor: 'white',
-                    headerStyle: { backgroundColor: 'tomato' },
-                }}
+                component={JournalComponent}
+                options={styles.options}
             />
             <Tab.Screen
                 name="Fil"
                 component={Fil}
-                options={{
-                    headerTintColor: 'white',
-                    headerStyle: { backgroundColor: 'tomato' },
-                }}
+                options={styles.options}
             />
             <Tab.Screen
                 name="Settings"
                 component={Settings}
-                options={{
-                    headerTintColor: 'white',
-                    headerStyle: { backgroundColor: 'tomato' },
-                }}
+                options={styles.options}
             />
         </Tab.Navigator>
     );
 }
 
+const Stack = createNativeStackNavigator()
+
+
 export default function HomeNavigator() {
     return (
-        <NavigationContainer>
-            <MyTabs />
+        <NavigationContainer >
+            <Stack.Navigator>
+                <Stack.Screen options={{headerShown: false}} name="Tab" component={MyTabs} />
+                <Stack.Screen  options={styles.options} name="AddFood" component={AddNewFood} />
+            </Stack.Navigator>
         </NavigationContainer>
     )
 }
+
+const getTabBarStyle = (route) => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'DashBoard';
+    let display = (routeName === 'Journal') ? 'none':'flex';
+    return 'none'
+}
+
+const styles = StyleSheet.create({
+    options: {
+        headerTintColor: 'white',
+        headerStyle: { backgroundColor: 'tomato' },
+    },
+})
